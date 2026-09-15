@@ -1,13 +1,40 @@
-# customize-group-header-using-mvvm-in-.net-maui-listview
+# How to customize group header using MVVM in .NET MAUI ListView(SfListView)?
 
-This example demonstrates about how to customize the group header using MVVM in .NET MAUI ListView (SfListView).
+In [.NET MAUI ListView](https://www.syncfusion.com/maui-controls/maui-listview), you can customize the [GroupHeaderTemplate](https://help.syncfusion.com/cr/maui/Syncfusion.Maui.ListView.SfListView.html#Syncfusion_Maui_ListView_SfListView_GroupHeaderTemplate) by binding properties in the `ViewModel` to elements within the template. This approach allows elements to be shown or hidden dynamically based on `ViewModel` properties, which will automatically update the UI when these properties change at runtime.
 
-## Sample
+Create a `ViewModel` with a property that can be bound to the `IsVisible` property of elements in the `GroupHeaderTemplate`. Implement `INotifyPropertyChanged` to notify the UI of changes.
 
-```xaml
-<ContentPage.Resources>
-    <ResourceDictionary>
-        <DataTemplate x:Name="GroupHeaderTemplate"  x:Key="GroupHeaderTemplate">
+**C#**
+```
+public class ContactsViewModel : INotifyPropertyChanged
+{
+    private bool isLabelVisible = false;
+    public bool IsLabelVisible
+    {
+        get { return isLabelVisible; }
+        set
+        {
+            isLabelVisible = value;
+            OnPropertyChanged("IsLabelVisible");
+        }
+    }
+}
+```
+
+**XAML**
+```
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:YourNamespace"
+             xmlns:listView="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+             x:Class="YourNamespace.MainPage">
+    
+    <ContentPage.BindingContext>
+        <local:ContactsViewModel />
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Resources>
+        <DataTemplate x:Key="GroupHeaderTemplate">
             <ViewCell>
                 <ViewCell.View>
                     <Grid>
@@ -17,84 +44,28 @@ This example demonstrates about how to customize the group header using MVVM in 
                             <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
                         <Image x:Name="NormalImage" Grid.Column="0" HorizontalOptions="Center"
-                    Source="{Binding IsExpand, Converter={StaticResource BoolToImageConverter}}"
-                    VerticalOptions="Center"/>
+                               Source="{Binding IsExpand, Converter={StaticResource BoolToImageConverter}}"
+                               VerticalOptions="Center" />
                         <Label x:Name="label" Text="{Binding Key}" Grid.Column="1" 
-                    IsVisible="{Binding Path=BindingContext.IsLabelVisible,
-                    Source={x:Reference listView}}"/>
+                               IsVisible="{Binding Source={x:Reference listView}, Path=BindingContext.IsLabelVisible}" />
                     </Grid>
                 </ViewCell.View>
             </ViewCell>
         </DataTemplate>
-    </ResourceDictionary>
     </ContentPage.Resources>
-
-<listView:SfListView Grid.Row="1" x:Name="listView" BackgroundColor="AliceBlue" 
-                                ItemSpacing="3" ItemSize="70" AllowGroupExpandCollapse="True"
-                                GroupHeaderTemplate="{StaticResource GroupHeaderTemplate}"                                   
-                                ItemsSource="{Binding Items}">
-    <listView:SfListView.DataSource>
-        <dataSource:DataSource>
-            <dataSource:DataSource.SortDescriptors>
-                <dataSource:SortDescriptor PropertyName="ContactName" Direction="Ascending"/>
-            </dataSource:DataSource.SortDescriptors>
-            <dataSource:DataSource.GroupDescriptors>
-                <dataSource:GroupDescriptor PropertyName="DisplayString" />
-            </dataSource:DataSource.GroupDescriptors>
-        </dataSource:DataSource>
-    </listView:SfListView.DataSource>
-    <listView:SfListView.ItemTemplate>
-        <DataTemplate>
-            <ViewCell>
-                <ViewCell.View>
-                    <Grid x:Name="grid" RowSpacing="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="1" />
-                        </Grid.RowDefinitions>
-                        <Grid RowSpacing="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="70" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid Grid.Column="0"
-                                    RowSpacing="1"
-                                    Padding="10,0,0,0"
-                                    VerticalOptions="Center">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-
-                                <Label LineBreakMode="WordWrap"
-                                        TextColor="#474747"
-                                        Text="{Binding ContactName}">
-                                </Label>
-                                <Label Grid.Row="1"
-                                        Grid.Column="0"
-                                        TextColor="#474747"
-                                        Text="{Binding ContactNumber}">
-                                </Label>
-                            </Grid>
-                        </Grid>
-                        <StackLayout Grid.Row="1" BackgroundColor="Gray" HeightRequest="1"/>
-                    </Grid>
-                </ViewCell.View>
-            </ViewCell>
-        </DataTemplate>
-    </listView:SfListView.ItemTemplate>
-
-</listView:SfListView>
+    
+    <listView:SfListView x:Name="listView" GroupHeaderTemplate="{StaticResource GroupHeaderTemplate}">
+        <!-- Other ListView properties and configurations here -->
+    </listView:SfListView>
+</ContentPage>
 ```
 
-## Requirements to run the demo
+**Conclusion**
 
-* [Visual Studio 2017](https://visualstudio.microsoft.com/downloads/) or [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/)
-* Xamarin add-ons for Visual Studio (available via the Visual Studio installer).
+I hope you enjoyed learning how to customize the group header template using MVVM in .NET MAUI ListView.
 
-## Troubleshooting
+You can refer to our [.NET MAUI ListView feature tour](https://www.syncfusion.com/maui-controls/maui-listview) page to know about its other groundbreaking feature representations and [documentation](https://help.syncfusion.com/maui/listview/getting-started), and how to quickly get started with configuration specifications. Explore our [.NET MAUI ListView example](https://github.com/syncfusion/maui-demos/tree/master/MAUI/ListView) to understand how to create and manipulate data.
 
-### Path too long exception
+You can check out our components from the [License and Downloads](https://www.syncfusion.com/sales/teamlicense) page for current customers. If you are new to Syncfusion®, try our 30-day [free trial](https://www.syncfusion.com/downloads/maui) to check out our other controls.
 
-If you are facing path too long exception when building this example project, close Visual Studio and rename the repository to short and build the project.
+Please let us know in the comments section below if you have any queries or require clarification. You can also contact us through our [support forums](https://www.syncfusion.com/forums), [Direct-Trac](https://support.syncfusion.com/create), or [feedback portal](https://www.syncfusion.com/feedback/maui?control=sflistview). We are always happy to assist you!
